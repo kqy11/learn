@@ -1,0 +1,54 @@
+导入包：_ "github.com/mattn/go-sqlite3"
+前缀为下划线，则init函数被执行，然后注册驱动
+
+db, err := sql.Open("sqlite3", ":memory:")
+if err != nil {
+	log.Fatal(err)
+}
+defer db.Close()
+Open函数指定驱动名称和数据源名称，本示例连接内存数据库。
+接着调用db.Close函数，确保关闭数据库并阻止启动新的查询。
+
+db, err := sql.Open("sqlite3", "/Users/liang/Downloads/test.db")
+创建数据库，生成新的数据库文件
+  
+err = db.QueryRow("SELECT SQLITE_VERSION()").Scan(&version)
+QueryRow执行查询，至少返回一行。Scan函数从返回行拷贝列至version变量。
+通过SELECT SQLITE_VERSION()语句返回版本号。
+
+_, err = db.Exec(sts)
+Exec函数执行没有返回记录的查询语句，即DML语句
+  
+res, err := db.Exec("DELETE FROM cars WHERE id IN (1, 2, 3)")
+n, err := res.RowsAffected()
+RowsAffected 返回执行DML语句影响的行数
+
+rows, err := db.Query("SELECT * FROM cars")
+查询语句返回符合条件记录，典型是SELECT，可选参数为占位符
+
+for rows.Next(){
+  
+}
+Next为Scan方法准备下一个结果行
+  
+err = rows.Scan(&id, &name, &price)
+Scan方法获取字段值，最后打印记录的列值
+
+cid := 3
+row := db.QueryRow("SELECT * FROM cars WHERE id = ?", cid)
+与下面相等
+stm, err := db.Prepare("SELECT * FROM cars WHERE id = ?")
+cid := 3
+err = stm.QueryRow(cid).Scan(&id, &name, &price)
+使用prepare函数执行prepare语句查询特定行
+传入参数给QueryRow函数，以替换占位符
+
+
+
+
+
+
+
+
+
+
