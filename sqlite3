@@ -1,6 +1,30 @@
 导入包：_ "github.com/mattn/go-sqlite3"
 前缀为下划线，则init函数被执行，然后注册驱动
 
+数据类型
+NULL。该值是一个 NULL 值。
+INTEGER。该值是一个有符号的整数，根据值的大小，存储 1、2、3、4、5、6 或 8 字节内容。
+REAL。该值是一个浮点值，存储一个 8 字节的 IEEE 浮点数。
+TEXT。该值是一个文本字符串，使用数据库编码（UTF-8、 UTF-16BE 或 UTF-16LE）进行存储。
+BLOB。该值是一个数据块，按照它的输入直接存储。
+
+Date 和 Time 数据类型
+TEXT 为 ISO8601 字符串（YYYY-MM-DD HH:MM:SS.SSS）。
+REAL 为“朱利安”天数，天数从“格林威治”公元前4714年11月24日中午到预期的公历。
+INTEGER 为 Unix Time，自 1970-01-01 00:00:00 UTC 以来的秒数。
+
+创建数据表
+_,err = db.Exec(`CREATE TABLE student (
+   	id INT PRIMARY KEY,
+   	name VARCHAR(20) NOT NULL,
+   	gender CHAR(1),
+   	age INT,
+   	address VARCHAR(50),
+   	email VARCHAR(50)
+	)
+`)
+
+
 插入数据
 stmt, err := db.Prepare("INSERT INTO userinfo(username, departname, created) values(?,?,?)")
 res, err := stmt.Exec("astaxie", "部门", "2012-12-09")
