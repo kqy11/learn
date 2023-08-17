@@ -8,21 +8,36 @@ REAL。该值是一个浮点值，存储一个 8 字节的 IEEE 浮点数。
 TEXT。该值是一个文本字符串，使用数据库编码（UTF-8、 UTF-16BE 或 UTF-16LE）进行存储。
 BLOB。该值是一个数据块，按照它的输入直接存储。
 
-Date 和 Time 数据类型
+布尔值
+INTEGER类别 1（true） 0（false）
+
+日期和时间
 TEXT 为 ISO8601 字符串（YYYY-MM-DD HH:MM:SS.SSS）。
 REAL 为“朱利安”天数，天数从“格林威治”公元前4714年11月24日中午到预期的公历。
 INTEGER 为 Unix Time，自 1970-01-01 00:00:00 UTC 以来的秒数。
 
 创建数据表
 _,err = db.Exec(`CREATE TABLE student (
-   	id INT PRIMARY KEY,
-   	name VARCHAR(20) NOT NULL,
+   	id INTEGER PRIMARY KEY AUTOINCREMRNT,//id列为整型，且为主键，自动递增
+   	name VARCHAR(20) NOT NULL,//最大长度为20的字符串类型
    	gender CHAR(1),
-   	age INT,
+   	age INTEGER,
    	address VARCHAR(50),
    	email VARCHAR(50)
 	)
 `)
+sts := `
+DROP TABLE IF EXISTS cars;
+CREATE TABLE cars(id INTEGER PRIMARY KEY, name TEXT, price INT);
+INSERT INTO cars(name, price) VALUES('Audi',52642);
+INSERT INTO cars(name, price) VALUES('Mercedes',57127);
+INSERT INTO cars(name, price) VALUES('Skoda',9000);
+INSERT INTO cars(name, price) VALUES('Volvo',29000);
+INSERT INTO cars(name, price) VALUES('Bentley',350000);
+INSERT INTO cars(name, price) VALUES('Citroen',21000);
+INSERT INTO cars(name, price) VALUES('Hummer',41400);
+INSERT INTO cars(name, price) VALUES('Volkswagen',21600);
+`
 
 
 插入数据
