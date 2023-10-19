@@ -1,3 +1,6 @@
+学习网站：
+http://www.vue5.com/sqlite/sqlite_limit_clause.html
+
 基本操作
 sqlite3  /Users/liang/Downloads/foo.db
 .databases
