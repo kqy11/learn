@@ -21,6 +21,9 @@ PRIMARY KEY (`uid`)
 
 .schema userinfo
 
+将包添加到go.mod
+go mod tidy
+go mod vendor
 
 导入包：_ "github.com/mattn/go-sqlite3"
 前缀为下划线，则init函数被执行，然后注册驱动
