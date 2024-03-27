@@ -1,0 +1,76 @@
+https://blog.csdn.net/qq_39309714/article/details/108992744
+增加
+在第一行添加插入nginx，之前第一行内容会到下一行
+sed -i '1i nginx' /home/env.conf
+
+在指定文件中第三行增加nginx
+sed -i "3i nginx" /home/entrypoint.sh
+
+在第五行添加内容，新的内容会在下一行出现
+sed -i '5a nginx' /home/env.conf
+
+在最后一行添加内容
+sed -i '$a nginx' /home/env.conf
+
+
+
+
+删除
+删除第一行内容
+sed -i '1d' /home/env.conf
+
+删除第四行内容
+sed -i '4d' /home/env.conf
+
+删除5 - 7行内容
+sed -i '5,7d' /home/env.conf
+
+删除最后一行
+sed -i '$d' /home/env.conf
+
+删除空行
+sed "/^$/d" /home/env.conf
+
+删除匹配上模式的行
+sed -i "/pattern/d"  log.txt
+
+删除匹配行的上一行和下一行
+sed -i -e '/string/{n;d}' -e '$!N;/\n.*string/!P;D' filename
+
+删除匹配到特定字符所在行的上一行
+sed -i -e '$!N;/\n.*string/!P;D' filename
+
+删除匹配到特定字符所在行的下一行
+sed -i -e '/string/{n;d}' filename
+
+
+
+替换
+/home/test/下所有文件中nginx替换为apache
+sed -i "s/nginx/apache/g" `grep nginx -rl /home/test/`
+
+将8行内容替换成nginx
+sed -i "8c nginx" /home/log.txt
+
+将2 - 5行内容替换成nginx
+sed -i "2,5c nginx" /home/log.txt
+
+替换空白字符为其他字符
+sed -i -e 's/[[:space:]][[:space:]]*/,/g' file
+
+给匹配到文件中具体的字符串的下一行插入一行数据
+sed -i '/listen/a\listen 80' filename
+
+给匹配到文件中具体的字符串的上一行插入一行数据
+sed -i '/listen/i\listen 80' filename
+
+在匹配到特定字符串的某行后批量插入多行数据
+sed -i '/syncsendmsg.php/a\#013.平台广告小时计划每5分钟写入主平台 xxx 2019-07-04\n*/5 * * * * /usr/bin/php /data/cron/ptask/countjs_syc_plan_main.php\n*/5 * * * * /usr/bin/php /data/cron/ptask/countjs_syc_plan_h_main.php' filename
+
+
+查询
+仅列出 /etc/passwd 文件内的第 5-7 行
+sed -n '5,7p' /home/env.conf
+
+搜索 /etc/passwd 有root关键字的行
+sed '/root/p' /etc/passwd
