@@ -1,1 +1,145 @@
+安装：
+go get gopkg.in/gin-gonic/gin.v1
+
+更新：
+go get -u
+
+"Hello World"代码
+package（
+  "gopkg.in/gin-gonic/gin.v1"
+  "net/http"
+）
+
+func main(){
+  router := gin.Default()
+  router.GET("/", func(c *gin.Context) {
+    c.String(http.StatusOK, "Hello World")
+    //c.JSON(http.StatusOK, gin.H{ 
+    //        "status": gin.H{ 
+    //            "status_code": http.StatusOK, 
+    //            "status": "ok", 
+    //        }, 
+    //        "message": message, 
+    //        "nick": nick,         
+    //})
+  })
+  router.Run(":8000")
+}
+
+路由参数：
+：+ 参数名    不会匹配/
+例：“/:name”
+* + 参数名    会匹配/
+例：“/*name”
+
+http的报文体传输数据：
+application/json
+application/x-www-form-urlencoded  把query string的内容，放到了body体里，同样也需要urlencode
+application/xml  
+multipart/form-data  文件上传
+
+c.Param("name")读取路由参数
+c.Query("name")读取路由用参数，用?以后连接的key1=value2&key2=value2的形式的参数
+c.DefaultQuery("name","kqy")方法读取参数，其中当key参数不存在的时候，提供一个默认值
+c.PostForm("message")解析的是x-www-form-urlencoded或from-data的参数,放在body体
+c.Request.FormFile("upload")解析客户端上传的文件name属性
+c.Request.ParseMultipartForm(200000)表示允许存储于内存的最大字节数；超出部分会被写入磁盘临时文件内
+formdata := c.Request.MultipartForm 多文件上传，得到文件句柄，再获取文件数据，然后遍历读写
+    files := formdata.File["upload"]
+router.LoadHTMLGlob("templates/*")表单上传
+    router.GET("/upload", func(c *gin.Context) {
+        c.HTML(http.StatusOK, "upload.html", gin.H{})
+    })
+c.XML(http.StatusOK, gin.H{ 
+            "user": "rsj217", 
+            "passwd": "123", 
+        })
+
+
+参数绑定及标签作用:
+type User struct { 
+    Username string `form:"username" json:"username" binding:"required"` 
+    Passwd string `form:"passwd" json:"passwd" bdinding:"required"` 
+    Age int `form:"age" json:"age"` 
+}
+标签
+form:参数以form格式解析
+json:参数以json格式解析，注意数据类型要一致，例：{"key": "value", "key": value}
+binding:不传则报错
+
+contentType := c.Request.Header.Get("Content-Type") 
+switch contentType { 
+  case "application/json": 
+    err = c.BindJSON(&user) 
+  case "application/x-www-form-urlencoded": 
+    err = c.BindWith(&user, binding.Form) 
+}
+或c.Bind(&user)根据content-type自动推断是bind表单还是json的参数
+
+
+重定向：
+router.GET("/redict/google", func(c *gin.Context) {
+        c.Redirect(http.StatusMovedPermanently, "https://google.com")
+})
+
+
+分组路由：
+router.Group()
+例：
+v1 := router.Group("/v1") 
+v1.GET("/login", func(c *gin.Context) { 
+    c.String(http.StatusOK, "v1 login") 
+})
+
+middleware中间件：（记录log，错误handler，还有就是对部分接口的鉴权）
+全局中间件
+func MiddleWare() gin.HandlerFunc { 
+    return func(c *gin.Context) { 
+        fmt.Println("before middleware") 
+        c.Set("request", "clinet_request") 
+        c.Next() 
+        fmt.Println("before middleware") 
+    } 
+}
+
+router.Use(MiddleWare()) { 
+    router.GET("/middleware", func(c *gin.Context) { 
+    }) 
+}
+单个路由中间件
+router.GET("/before", MiddleWare(), func(c *gin.Context) { }
+群组中间件
+authorized := router.Group("/", Middelware()) 
+
+
+异步协程：
+因为涉及异步过程，请求的上下文需要copy到异步的上下文，并且这个上下文是只读的
+响应返回了，然后程序还在后台的协程处理
+router.GET("/async", func(c *gin.Context) { 
+    cCp := c.Copy() 
+    go func() { 
+        time.Sleep(5 * time.Second) 
+        log.Println("Done! in path" + cCp.Request.URL.Path) 
+    }() 
+})
+
+
+自定义router：
+gin不仅可以使用框架本身的router进行Run，也可以配合使用net/http本身的功能
+func main() {
+    router := gin.Default()
+    http.ListenAndServe(":8080", router)
+}
+或
+func main() { 
+    router := gin.Default() 
+    s := &http.Server{ 
+        Addr: ":8000", 
+        Handler: router, 
+        ReadTimeout: 10 * time.Second, 
+        WriteTimeout: 10 * time.Second, 
+        MaxHeaderBytes: 1 << 20, 
+    } 
+    s.ListenAndServe() 
+}
 
